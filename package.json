@@ -1,0 +1,21 @@
+{
+  "name": "movie-tickets-notifier",
+  "version": "0.0.1",
+  "description": "An app to notify availability of a movie's tickets",
+  "engines": {
+    "node": "5.9.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    /*"start": "node index.js"*/
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/srimoturi/MovieTicketsNotifier.git"
+  },
+  "keywords": [
+    "movies",
+    "tickets",
+  ],
+  "license": "MIT"
+}
