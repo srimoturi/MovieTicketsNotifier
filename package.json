@@ -9,13 +9,17 @@
   "scripts": {
     "start": "node index.js"
   },
+  "dependencies": {
+    "ejs": "2.4.1",
+    "express": "4.13.3"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/srimoturi/MovieTicketsNotifier.git"
   },
   "keywords": [
     "movies",
-    "tickets",
+    "tickets"
   ],
   "license": "MIT"
 }
