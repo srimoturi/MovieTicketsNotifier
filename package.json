@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "An app to notify availability of a movie's tickets",
   "engines": {
-    "node": "5.9.1"
+    "node": "6.7.0"
   },
   "main": "index.js",
   "scripts": {
