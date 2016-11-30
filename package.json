@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "ejs": "2.4.1",
-    "express": "4.13.3"
+    "express": "^4.14.0",
+    "cron": "^1.1.0",
+    "underscore": "^1.8.3",
+    "htmlparser2" : "^3.9.1"
   },
   "repository": {
     "type": "git",
@@ -21,5 +24,4 @@
     "movies",
     "tickets"
   ],
-  "license": "MIT"
 }
