@@ -1,0 +1,6 @@
+{
+  "name": "MovieTicketsNotifier",
+  "description": "&#34;An endpoint to get notifications for movie tickets &#34;",
+  "start_url": "/",
+  "display": "standalone"
+}
