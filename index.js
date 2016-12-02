@@ -1,5 +1,6 @@
 
 var express = require('express');
+var pvrCrawler = require('./pvrCrawler')
 var app = express();
 
 app.set('port', (process.env.PORT || 5000));
@@ -11,7 +12,10 @@ app.set('port', (process.env.PORT || 5000));
 // app.set('view engine', 'ejs');
 
 app.get('/', function (req, res) {
-   res.send('Hello World');
+  pvrCrawler.getParsedData(function(data) {
+    // console.log(data)
+      res.send(data)
+  });
 })
 
 app.listen(app.get('port'), function() {
