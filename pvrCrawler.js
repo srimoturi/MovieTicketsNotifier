@@ -1,76 +1,64 @@
-var htmlparser = require('htmlparser2')
-var http = require('https');
-var domutils = require('domutils');
+var request = require('request');
+var cheerio = require('cheerio');
+var _ = require('underscore');
 
-var url = 'https://www.pvrcinemas.com/cinemas/Hyderabad'
+var url = 'http://www.pvrcinemas.com/nowshowing/hyderabad'
 
-exports.getParsedData = function(callback) {
-  http.get(url, function(response) {
-      response.on('data', function(data) {
-        domParse(data,callback)
-      });
+var nowshowingtag = "now-showing";
+var comingsoon = "coming-soon";
 
+exports.comingsoonMovies = function(callback) {
+  moviesDictionary(comingsoon, callback);
+}
+
+exports.nowShowingMovies = function(callback) {
+  moviesDictionary(nowshowingtag, callback);
+}
+
+function moviesDictionary(movieTypeTag, callback) {
+  var tag = _.template("div[id=<%= tagId %>]");
+  var movieTag = tag({tagId: movieTypeTag});
+  console.log(movieTag);
+
+  request(url, function(err, response, body) {
+    var data = [];
+    parsedBody = cheerio.load(body, {
+      normalizeWhitespace: true,
+      xmlMode: true
+    });
+
+    nowshowing = parsedBody(movieTag).find('.poster-holder > div > .poster');
+
+    parsedBody(nowshowing).each(function(i, element) {
+      var dict = new Object();
+
+      parsedBody(element).find('img').each(function(j, img) {
+        dict['posterLink'] = parsedBody(img).attr('src');
+      })
+
+      parsedBody(element).find('.m-name').each(function(j, name) {
+        var name = parsedBody(name).text();
+        if (name.length > 0) {
+          dict['title'] = name;
+        }
+      })
+
+      parsedBody(element).find('.other-det').each(function(j, otherDetails) {
+        otherDetText = parsedBody(otherDetails).text();
+        runtime = otherDetText.replace(/\D/g,'');
+        var langWithoutMins = otherDetText.replace('mins', '');
+        var lang = langWithoutMins.replace(/\d+|^\s+|\s+$/g,'');
+
+        if (lang.length > 0) {
+          dict['lang'] = lang;
+          dict['runtime'] = runtime + ' mins';
+        }
+      })
+
+      data[i] = dict;
+
+    });
+
+    callback(data);
   });
 }
-
-function domParse(html, callback) {
- var handler = new htmlparser.DomHandler(function (error, dom) {
-     if (error) {
-       console.error();
-     }
-     else {
-       var values = domUtils.getElements({ tag_contains: "div" }, dom, true);
-        console.log(values[0]);
-         callback();
-     }
- });
-
- var parser = new htmlparser.Parser(handler);
- parser.write(html);
- parser.done();
-}
-
-// var parseResponse = function(response, callback) {
-//   var data = "";
-//   response.on('data', function(chunk) {
-//     data += chunk;
-//   });
-//   var tags = [];
-//   var texts = [];
-//   var tagsCount = {};
-//   var tagsWithCount = [];
-//   var add = 0;
-//   response.on('end', function(chunk) {
-//     var parsedData = new htmlparser.Parser({
-//      onopentag: function(name, attribs) {
-//        console.log(name + "---->" + attribs);
-//        if(name === "div" && attribs.id === "now-showing"){
-//             add = 1;
-//         }
-//
-//       if(tags.indexOf(name) === -1) {
-//        tags.push(name);
-//  tagsCount[name] = 1;
-//        } else {
-//  tagsCount[name]++;
-//        }
-//      },
-//      ontext: function(text) {
-//        if(add === 1) {
-//          texts.push(text)
-//        }
-//
-//      },
-//      onend: function() {
-//        console.log("END");
-//       for(var i = 1;i < tags.length;i++) {
-//        tagsWithCount.push({name:tags[i], count:tagsCount[tags[i]]});
-//      }
-//     }
-//    }, {decodeEntities: true});
-//    parsedData.write(data);
-//    parsedData.end();
-//    //console.log(tagsWithCount);
-//    callback(texts)
-//   });
-// }
